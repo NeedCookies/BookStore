@@ -1,0 +1,70 @@
+﻿using BookStore.Core.Models;
+using BookStore.DataAccess.Entities;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BookStore.DataAccess.Repositories
+{
+    public class BookRepository : IBookRepository
+    {
+        private readonly BookStoreDbContext _context;
+
+        public BookRepository(BookStoreDbContext context)
+        {
+            _context = context;
+        }
+
+        public async Task<List<Book>> GetAll()
+        {
+            var bookEntities = await _context.Books
+                .AsNoTracking()
+                .ToListAsync();
+
+            var books = bookEntities
+                .Select(b => Book.Create(b.Id, b.Title, b.Description, b.Price).Book)
+                .ToList();
+
+            return books;
+        }
+
+        public async Task<Guid> Create(Book book)
+        {
+            var bookEntity = new BookEntity
+            {
+                Id = book.Id,
+                Title = book.Title,
+                Description = book.Description,
+                Price = book.Price
+            };
+
+            _context.Books.Add(bookEntity);
+
+            return bookEntity.Id;
+        }
+
+        public async Task<Guid> Update(Guid id, string title, string desc, decimal price)
+        {
+            await _context.Books
+                .Where(b => b.Id == id)
+                .ExecuteUpdateAsync(x => x
+                .SetProperty(x => x.Title, x => title)
+                .SetProperty(x => x.Description, x => desc)
+                .SetProperty(x => x.Price, x => price));
+
+            return id;
+        }
+
+        public async Task<Guid> Delete(Guid id)
+        {
+            await _context.Books
+                .Where(b => b.Id == id)
+                .ExecuteDeleteAsync();
+
+            return id;
+        }
+    }
+}
