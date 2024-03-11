@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BookStore.DataAccess.Repositories
 {
-    public class BookRepository : IBookRepository
+    public class BookRepository : IBooksRepository
     {
         private readonly BookStoreDbContext _context;
 
@@ -41,7 +41,8 @@ namespace BookStore.DataAccess.Repositories
                 Price = book.Price
             };
 
-            _context.Books.Add(bookEntity);
+            await _context.Books.AddAsync(bookEntity);
+            await _context.SaveChangesAsync();
 
             return bookEntity.Id;
         }
@@ -55,6 +56,8 @@ namespace BookStore.DataAccess.Repositories
                 .SetProperty(x => x.Description, x => desc)
                 .SetProperty(x => x.Price, x => price));
 
+            await _context.SaveChangesAsync();
+
             return id;
         }
 
@@ -63,6 +66,8 @@ namespace BookStore.DataAccess.Repositories
             await _context.Books
                 .Where(b => b.Id == id)
                 .ExecuteDeleteAsync();
+
+            await _context.SaveChangesAsync();
 
             return id;
         }

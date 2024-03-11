@@ -7,7 +7,7 @@ using BookStore.Core.Models;
 
 namespace BookStore.DataAccess.Repositories
 {
-    public interface IBookRepository
+    public interface IBooksRepository
     {
         public Task<List<Book>> GetAll();
         public Task<Guid> Create(Book book);
