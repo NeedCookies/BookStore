@@ -1,19 +1,15 @@
-﻿using BookStore.Core.Models;
+﻿using BookStore.Core.Abstractions;
+using BookStore.Core.Models;
 using BookStore.DataAccess.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BookStore.DataAccess.Repositories
 {
-    public class BookRepository : IBooksRepository
+    public class BooksRepository : IBooksRepository
     {
         private readonly BookStoreDbContext _context;
 
-        public BookRepository(BookStoreDbContext context)
+        public BooksRepository(BookStoreDbContext context)
         {
             _context = context;
         }
